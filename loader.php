@@ -108,7 +108,7 @@ function bi_natl_member_form_creation() {
 			<div id="resultsdiv" style="display:none">
 				<h2>Member Results</h2>
 				<div id="resultsfound"></div>		
-				<div id="showmapdiv"><a id="showmap" href="javascript:void(0)">Map Results</a></div>
+				<div id="showmapdiv"><button id="showmap" type="button">Map the Results</button></div>
 				<br />
 				<div id="resultboxes">
 					<ul id="resultlist"></ul>
@@ -166,57 +166,57 @@ function bi_natl_member_form_creation() {
 					<strong>State:</strong><br />
 					<select id="state" name="state" required>
 						<option value="" selected>---Select---</option>		
-						<option value="AL">AL</option>
-						<option value="AK">AK</option>
-						<option value="AZ">AZ</option>
-						<option value="AR">AR</option>
-						<option value="CA">CA</option>
-						<option value="CO">CO</option>
-						<option value="CT">CT</option>
-						<option value="DE">DE</option>
-						<option value="DC">DC</option>
-						<option value="FL">FL</option>
-						<option value="GA">GA</option>
-						<option value="HI">HI</option>
-						<option value="ID">ID</option>
-						<option value="IL">IL</option>
-						<option value="IN">IN</option>
-						<option value="IA">IA</option>
-						<option value="KS">KS</option>
-						<option value="KY">KY</option>
-						<option value="LA">LA</option>
-						<option value="ME">ME</option>
-						<option value="MD">MD</option>
-						<option value="MA">MA</option>
-						<option value="MI">MI</option>
-						<option value="MN">MN</option>
-						<option value="MS">MS</option>
-						<option value="MO">MO</option>
-						<option value="MT">MT</option>
-						<option value="NE">NE</option>
-						<option value="NV">NV</option>
-						<option value="NH">NH</option>
-						<option value="NJ">NJ</option>
-						<option value="NM">NM</option>
-						<option value="NY">NY</option>
-						<option value="NC">NC</option>
-						<option value="ND">ND</option>
-						<option value="OH">OH</option>
-						<option value="OK">OK</option>
-						<option value="OR">OR</option>
-						<option value="PA">PA</option>
-						<option value="RI">RI</option>
-						<option value="SC">SC</option>
-						<option value="SD">SD</option>
-						<option value="TN">TN</option>
-						<option value="TX">TX</option>
-						<option value="UT">UT</option>
-						<option value="VT">VT</option>
-						<option value="VA">VA</option>
-						<option value="WA">WA</option>
-						<option value="WV">WV</option>
-						<option value="WI">WI</option>
-						<option value="WY">WY</option>		
+							<option value="Alabama">Alabama</option>
+							<option value="Alaska">Alaska</option>
+							<option value="Arizona">Arizona</option>
+							<option value="Arkansas">Arkansas</option>
+							<option value="California">California</option>
+							<option value="Colorado">Colorado</option>
+							<option value="Connecticut">Connecticut</option>
+							<option value="Delaware">Delaware</option>
+							<option value="District of Columbia">District of Columbia</option>
+							<option value="Florida">Florida</option>
+							<option value="Georgia">Georgia</option>
+							<option value="Hawaii">Hawaii</option>
+							<option value="Idaho">Idaho</option>
+							<option value="Illinois">Illinois</option>
+							<option value="Indiana">Indiana</option>
+							<option value="Iowa">Iowa</option>
+							<option value="Kansas">Kansas</option>
+							<option value="Kentucky">Kentucky</option>
+							<option value="Louisiana">Louisiana</option>
+							<option value="Maine">Maine</option>
+							<option value="Maryland">Maryland</option>
+							<option value="Massachusetts">Massachusetts</option>
+							<option value="Michigan">Michigan</option>
+							<option value="Minnesota">Minnesota</option>
+							<option value="Mississippi">Mississippi</option>
+							<option value="Missouri">Missouri</option>
+							<option value="Montana">Montana</option>
+							<option value="Nebraska">Nebraska</option>
+							<option value="Nevada">Nevada</option>
+							<option value="New Hampshire">New Hampshire</option>
+							<option value="New Jersey">New Jersey</option>
+							<option value="New Mexico">New Mexico</option>
+							<option value="New York">New York</option>
+							<option value="North Carolina">North Carolina</option>
+							<option value="North Dakota">North Dakota</option>
+							<option value="Ohio">Ohio</option>
+							<option value="Oklahoma">Oklahoma</option>
+							<option value="Oregon">Oregon</option>
+							<option value="Pennsylvania">Pennsylvania</option>
+							<option value="Rhode Island">Rhode Island</option>
+							<option value="South Carolina">South Carolina</option>
+							<option value="South Dakota">South Dakota</option>
+							<option value="Tennessee">Tennessee</option>
+							<option value="Texas">Texas</option>
+							<option value="Utah">Utah</option>
+							<option value="Vermont">Vermont</option>
+							<option value="Virginia">Virginia</option>
+							<option value="Washington">Washington</option>
+							<option value="West Virginia">West Virginia</option>
+							<option value="Wisconsin">Wisconsin</option>
+							<option value="Wyoming">Wyoming</option>		
 					</select>
 					<br /><br/>
 					<strong>ZIP Code:</strong><br /><input type="text" id="zip_code" name="zip_code" style="width:100px" required /><br /><br/>	
@@ -472,13 +472,33 @@ function bi_natl_member_search_callback() {
 			array(
 				'key' => 'officename',
 				'value' => $keywordsearch,
-				'compare' => '='
+				'compare' => 'LIKE'
 			),
 			array(
 				'key' => 'audience',
 				'value' => $keywordsearch,
-				'compare' => '='
-			)		
+				'compare' => 'LIKE'
+			),
+			array(
+				'key' => 'city',
+				'value' => $keywordsearch,
+				'compare' => 'LIKE'
+			),			
+			array(
+				'key' => 'state',
+				'value' => $keywordsearch,
+				'compare' => 'LIKE'
+			),
+			array(
+				'key' => 'institution',
+				'value' => $keywordsearch,
+				'compare' => 'LIKE'
+			),	
+			array(
+				'key' => 'skillset',
+				'value' => $keywordsearch,
+				'compare' => 'LIKE'
+			)			
 		)		
 	));
 	
