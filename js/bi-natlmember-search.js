@@ -3,10 +3,20 @@ var lat_lng = [];
 var markers = [];
 var map;
 	$( document ).ready(function() {
-		// $("#map img").css({'max-width':'none'});
-		// $("#myTable").tablesorter(); 
-
-	
+		//code for words left (50 or less)
+		$("#skillset").on('keyup', function() {
+			var words = this.value.match(/\S+/g).length;
+			if (words > 50) {
+				// Split the string on first 200 words and rejoin on spaces
+				var trimmed = $(this).val().split(/\s+/, 50).join(" ");
+				// Add a space at the end to keep new typing making new words
+				$(this).val(trimmed + " ");
+			}
+			else {
+				$('#display_count').text(words);
+				$('#word_left').text(50-words);
+			}
+		});	
 	});
 	
 	$( "#addnewmember" ).click(function() {

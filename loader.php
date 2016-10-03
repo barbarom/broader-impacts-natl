@@ -158,13 +158,13 @@ function bi_natl_member_form_creation() {
 				<h2 id="member_form_title">Add a member</h2>			
 				<form id="member_form" name="member_form" action="" method="post">
 					<input type="hidden" id="member_id" name="member_id" value="" />
-					<strong>Name:</strong><br /><input type="text" id="membername" name="membername" style="width:400px" /><br /><br />
-					<strong>Phone:</strong><br /><input type="text" id="phone" name="phone" placeholder="(XXX) XXX-XXXX" style="width:400px" /><br /><br />
-					<strong>Email:</strong><br /><input type="text" id="email" name="email" style="width:400px" /><br /><br />
-					<strong>Street Address:</strong><br /><input type="text" id="street_address" name="street_address" style="width:400px" /><br /><br />
-					<strong>City:</strong><br /><input type="text" id="city" name="city" style="width:400px" /><br /><br />
+					<strong>Name:</strong><br /><input type="text" id="membername" name="membername" style="width:400px" required /><br /><br />
+					<strong>Phone:</strong><br /><input type="text" id="phone" name="phone" placeholder="(XXX) XXX-XXXX" style="width:400px" required /><br /><br />
+					<strong>Email:</strong><br /><input type="text" id="email" name="email" style="width:400px" required /><br /><br />
+					<strong>Street Address:</strong><br /><input type="text" id="street_address" name="street_address" style="width:400px" required /><br /><br />
+					<strong>City:</strong><br /><input type="text" id="city" name="city" style="width:400px" required /><br /><br />
 					<strong>State:</strong><br />
-					<select id="state" name="state">
+					<select id="state" name="state" required>
 						<option value="" selected>---Select---</option>		
 						<option value="AL">AL</option>
 						<option value="AK">AK</option>
@@ -219,11 +219,11 @@ function bi_natl_member_form_creation() {
 						<option value="WY">WY</option>		
 					</select>
 					<br /><br/>
-					<strong>ZIP Code:</strong><br /><input type="text" id="zip_code" name="zip_code" style="width:100px" /><br /><br/>	
-					<strong>Office Name:</strong><br /><input type="text" id="officename" name="officename" style="width:400px" /><br /><br />
-					<strong>Academic Institution:</strong><br /><input type="text" id="institution" name="institution" style="width:400px" /><br /><br />
-					<strong>Your Skillset (50 words or less):</strong><br /><textarea id="skillset" name="skillset" rows="4" cols="55"></textarea><br /><br />
-					<strong>Audiences Served:</strong><br /><input type="text" id="audience" name="audience" style="width:400px" /><br /><br />
+					<strong>ZIP Code:</strong><br /><input type="text" id="zip_code" name="zip_code" style="width:100px" required /><br /><br/>	
+					<strong>Office Name:</strong><br /><input type="text" id="officename" name="officename" style="width:400px" required /><br /><br />
+					<strong>Academic Institution:</strong><br /><input type="text" id="institution" name="institution" style="width:400px" required /><br /><br />
+					<strong>Your Skillset (50 words or less):</strong><br /><textarea id="skillset" name="skillset" rows="4" cols="55" required></textarea><br />Total word count: <span id="display_count">0</span> words. Words left: <span id="word_left">50</span><br /><br />
+					<strong>Audiences Served:</strong><br /><input type="text" id="audience" name="audience" style="width:400px" required /><br /><br />
 					<strong>Tags:</strong> <span style="font-style:italic">(separate tags with a comma)</span><br /><input type="text" id="tags" name="tags" style="width:400px" /><br /><br />
 		
 					<br /><br/>
