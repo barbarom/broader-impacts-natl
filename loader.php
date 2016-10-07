@@ -33,15 +33,26 @@ function register_cpt_bi_natl_membership() {
         'public' => true,
         'show_ui' => true,
         'show_in_menu' => true,
-		'supports' => array(  ),
-		'taxonomies' => array( 'post_tag' )		
+		'supports' => array(  )
     );
 
     register_post_type( 'bi_natl_member', $args );
 }
 
+add_action( 'init', 'create_binm_taxonomy' );
+function create_binm_taxonomy() {
+	register_taxonomy(
+		'binm_tags',
+		'bi_natl_member',
+		array(
+			'label' => 'BINM Tags',
+			'hierarchical' => true,
+		)
+	);
+}
+
 function bi_natl_member_search_scripts() {
-		wp_enqueue_script( 'bi_natl_member_search2', plugin_dir_url(__FILE__) . 'js/masked_input.js', array('jquery'), '1.0.0', true ); 
+	wp_enqueue_script( 'bi_natl_member_search2', plugin_dir_url(__FILE__) . 'js/masked_input.js', array('jquery'), '1.0.0', true ); 
 	wp_enqueue_script( 'bi_natl_member_search', plugin_dir_url(__FILE__) . 'js/bi-natlmember-search.js', array('jquery'), '1.0.0', true ); 
 	wp_enqueue_script( 'bi_natl_member_search3', plugin_dir_url(__FILE__) . 'js/markerclusterer.js', array('jquery'), '1.0.0', true );
 
@@ -141,14 +152,16 @@ function bi_natl_member_form_creation() {
 						$approval_title = get_the_title();
 						$skillset = get_the_content();
 						$officename = get_post_meta( $approval_postid, 'officename', true );
-						$institution = get_post_meta( $approval_postid, 'institution', true );
-						$audience = get_post_meta( $approval_postid, 'audience', true );
+						$institution = get_post_meta( $approval_postid, 'institution', true );						
 						$phone = get_post_meta( $approval_postid, 'phone', true );
 						$email = get_post_meta( $approval_postid, 'email', true );
 						$streetaddress = get_post_meta( $approval_postid, 'street_address', true );
 						$city = get_post_meta( $approval_postid, 'city', true );
 						$state = get_post_meta( $approval_postid, 'state', true );
-						$zipcode = get_post_meta( $approval_postid, 'zip_code', true );		
+						$country = get_post_meta( $approval_postid, 'country', true );
+						$zipcode = get_post_meta( $approval_postid, 'zip_code', true );	
+						$socialmedia = get_post_meta( $approval_postid, 'socialmedia', true );
+						$website = get_post_meta( $approval_postid, 'website', true );						
 						echo "<div id='" . $approval_postid . "' style='padding:15px;border:solid 2px #a9a9a9;background-color:#FAF0E6;width:70%;max-width:70%;'><div style='float:right;'><button style='margin-left:5px;' onclick='approvemember(" . $approval_postid . ")'>Approve</button></div><div style='float:right;'><button style='margin-left:5px;' onclick='deletemember(" . $approval_postid . ")'>Delete</button></div><strong style='font-size:14pt;'>" . $approval_title . "</strong><br /><strong>Phone:</strong> " . $phone . "<br /><strong>Email:</strong> <a href='mailto:" . $email . "'>" . $email . "</a><br /><strong>Street Address:</strong> " . $streetaddress . "<br /><strong>City:</strong> " . $city . "<br /><strong>State:</strong> " . $state . "<br /><strong>ZIP Code:</strong> " . $zipcode . "<br /><strong>Office Name:</strong> " . $officename . "<br /><strong>Academic Institution: " . $institution . "</strong><strong>Your Skillset:</strong> " . $skillset . "<br /><strong>Audience:</strong> " . $audience . "<br /></div><br />";					
 						
 					}	
@@ -158,14 +171,15 @@ function bi_natl_member_form_creation() {
 				<h2 id="member_form_title">Add a member</h2>			
 				<form id="member_form" name="member_form" action="" method="post">
 					<input type="hidden" id="member_id" name="member_id" value="" />
-					<strong>Name:</strong><br /><input type="text" id="membername" name="membername" style="width:400px" required /><br /><br />
-					<strong>Phone:</strong><br /><input type="text" id="phone" name="phone" placeholder="(XXX) XXX-XXXX" style="width:400px" required /><br /><br />
-					<strong>Email:</strong><br /><input type="text" id="email" name="email" style="width:400px" required /><br /><br />
-					<strong>Street Address:</strong><br /><input type="text" id="street_address" name="street_address" style="width:400px" required /><br /><br />
-					<strong>City:</strong><br /><input type="text" id="city" name="city" style="width:400px" required /><br /><br />
-					<strong>State:</strong><br />
+					<strong>Name*:</strong><br /><input type="text" id="membername" name="membername" style="width:400px" required /><br /><br />
+					<strong>Phone*:</strong><br /><input type="text" id="phone" name="phone" placeholder="(XXX) XXX-XXXX" style="width:400px" required /><br /><br />
+					<strong>Email*:</strong><br /><input type="text" id="email" name="email" style="width:400px" required /><br /><br />
+					<strong>Street Address*:</strong><br /><input type="text" id="street_address" name="street_address" style="width:400px" required /><br /><br />
+					<strong>City*:</strong><br /><input type="text" id="city" name="city" style="width:400px" required /><br /><br />
+					<strong>State*:</strong><br />
 					<select id="state" name="state" required>
-						<option value="" selected>---Select---</option>		
+						<option value="" selected>---Select---</option>	
+							<option value="n/a">N/A (Outside the U.S.)</option>						
 							<option value="Alabama">Alabama</option>
 							<option value="Alaska">Alaska</option>
 							<option value="Arizona">Arizona</option>
@@ -219,16 +233,292 @@ function bi_natl_member_form_creation() {
 							<option value="Wyoming">Wyoming</option>		
 					</select>
 					<br /><br/>
-					<strong>ZIP Code:</strong><br /><input type="text" id="zip_code" name="zip_code" style="width:100px" required /><br /><br/>	
-					<strong>Office Name:</strong><br /><input type="text" id="officename" name="officename" style="width:400px" required /><br /><br />
-					<strong>Academic Institution:</strong><br /><input type="text" id="institution" name="institution" style="width:400px" required /><br /><br />
-					<strong>Your Skillset (50 words or less):</strong><br /><textarea id="skillset" name="skillset" rows="4" cols="55" required></textarea><br />Total word count: <span id="display_count">0</span> words. Words left: <span id="word_left">50</span><br /><br />
-					<strong>Audiences Served:</strong><br /><input type="text" id="audience" name="audience" style="width:400px" required /><br /><br />
-					<strong>Tags:</strong> <span style="font-style:italic">(separate tags with a comma)</span><br /><input type="text" id="tags" name="tags" style="width:400px" /><br /><br />
-		
+					<strong>ZIP Code:</strong><br /><input type="text" id="zip_code" name="zip_code" style="width:100px" /><br /><br/>
+					<strong>Country:</strong><br />
+					<select name="country">
+						<option value="">---Select---</option>
+						<option value="United States of America">United States of America</option>					
+						<option value="Afganistan">Afghanistan</option>
+						<option value="Albania">Albania</option>
+						<option value="Algeria">Algeria</option>
+						<option value="American Samoa">American Samoa</option>
+						<option value="Andorra">Andorra</option>
+						<option value="Angola">Angola</option>
+						<option value="Anguilla">Anguilla</option>
+						<option value="Antigua &amp; Barbuda">Antigua &amp; Barbuda</option>
+						<option value="Argentina">Argentina</option>
+						<option value="Armenia">Armenia</option>
+						<option value="Aruba">Aruba</option>
+						<option value="Australia">Australia</option>
+						<option value="Austria">Austria</option>
+						<option value="Azerbaijan">Azerbaijan</option>
+						<option value="Bahamas">Bahamas</option>
+						<option value="Bahrain">Bahrain</option>
+						<option value="Bangladesh">Bangladesh</option>
+						<option value="Barbados">Barbados</option>
+						<option value="Belarus">Belarus</option>
+						<option value="Belgium">Belgium</option>
+						<option value="Belize">Belize</option>
+						<option value="Benin">Benin</option>
+						<option value="Bermuda">Bermuda</option>
+						<option value="Bhutan">Bhutan</option>
+						<option value="Bolivia">Bolivia</option>
+						<option value="Bonaire">Bonaire</option>
+						<option value="Bosnia &amp; Herzegovina">Bosnia &amp; Herzegovina</option>
+						<option value="Botswana">Botswana</option>
+						<option value="Brazil">Brazil</option>
+						<option value="British Indian Ocean Ter">British Indian Ocean Ter</option>
+						<option value="Brunei">Brunei</option>
+						<option value="Bulgaria">Bulgaria</option>
+						<option value="Burkina Faso">Burkina Faso</option>
+						<option value="Burundi">Burundi</option>
+						<option value="Cambodia">Cambodia</option>
+						<option value="Cameroon">Cameroon</option>
+						<option value="Canada">Canada</option>
+						<option value="Canary Islands">Canary Islands</option>
+						<option value="Cape Verde">Cape Verde</option>
+						<option value="Cayman Islands">Cayman Islands</option>
+						<option value="Central African Republic">Central African Republic</option>
+						<option value="Chad">Chad</option>
+						<option value="Channel Islands">Channel Islands</option>
+						<option value="Chile">Chile</option>
+						<option value="China">China</option>
+						<option value="Christmas Island">Christmas Island</option>
+						<option value="Cocos Island">Cocos Island</option>
+						<option value="Colombia">Colombia</option>
+						<option value="Comoros">Comoros</option>
+						<option value="Congo">Congo</option>
+						<option value="Cook Islands">Cook Islands</option>
+						<option value="Costa Rica">Costa Rica</option>
+						<option value="Cote DIvoire">Cote D'Ivoire</option>
+						<option value="Croatia">Croatia</option>
+						<option value="Cuba">Cuba</option>
+						<option value="Curaco">Curacao</option>
+						<option value="Cyprus">Cyprus</option>
+						<option value="Czech Republic">Czech Republic</option>
+						<option value="Denmark">Denmark</option>
+						<option value="Djibouti">Djibouti</option>
+						<option value="Dominica">Dominica</option>
+						<option value="Dominican Republic">Dominican Republic</option>
+						<option value="East Timor">East Timor</option>
+						<option value="Ecuador">Ecuador</option>
+						<option value="Egypt">Egypt</option>
+						<option value="El Salvador">El Salvador</option>
+						<option value="Equatorial Guinea">Equatorial Guinea</option>
+						<option value="Eritrea">Eritrea</option>
+						<option value="Estonia">Estonia</option>
+						<option value="Ethiopia">Ethiopia</option>
+						<option value="Falkland Islands">Falkland Islands</option>
+						<option value="Faroe Islands">Faroe Islands</option>
+						<option value="Fiji">Fiji</option>
+						<option value="Finland">Finland</option>
+						<option value="France">France</option>
+						<option value="French Guiana">French Guiana</option>
+						<option value="French Polynesia">French Polynesia</option>
+						<option value="French Southern Ter">French Southern Ter</option>
+						<option value="Gabon">Gabon</option>
+						<option value="Gambia">Gambia</option>
+						<option value="Georgia">Georgia</option>
+						<option value="Germany">Germany</option>
+						<option value="Ghana">Ghana</option>
+						<option value="Gibraltar">Gibraltar</option>
+						<option value="Great Britain">Great Britain</option>
+						<option value="Greece">Greece</option>
+						<option value="Greenland">Greenland</option>
+						<option value="Grenada">Grenada</option>
+						<option value="Guadeloupe">Guadeloupe</option>
+						<option value="Guam">Guam</option>
+						<option value="Guatemala">Guatemala</option>
+						<option value="Guinea">Guinea</option>
+						<option value="Guyana">Guyana</option>
+						<option value="Haiti">Haiti</option>
+						<option value="Hawaii">Hawaii</option>
+						<option value="Honduras">Honduras</option>
+						<option value="Hong Kong">Hong Kong</option>
+						<option value="Hungary">Hungary</option>
+						<option value="Iceland">Iceland</option>
+						<option value="India">India</option>
+						<option value="Indonesia">Indonesia</option>
+						<option value="Iran">Iran</option>
+						<option value="Iraq">Iraq</option>
+						<option value="Ireland">Ireland</option>
+						<option value="Isle of Man">Isle of Man</option>
+						<option value="Israel">Israel</option>
+						<option value="Italy">Italy</option>
+						<option value="Jamaica">Jamaica</option>
+						<option value="Japan">Japan</option>
+						<option value="Jordan">Jordan</option>
+						<option value="Kazakhstan">Kazakhstan</option>
+						<option value="Kenya">Kenya</option>
+						<option value="Kiribati">Kiribati</option>
+						<option value="Korea North">Korea North</option>
+						<option value="Korea Sout">Korea South</option>
+						<option value="Kuwait">Kuwait</option>
+						<option value="Kyrgyzstan">Kyrgyzstan</option>
+						<option value="Laos">Laos</option>
+						<option value="Latvia">Latvia</option>
+						<option value="Lebanon">Lebanon</option>
+						<option value="Lesotho">Lesotho</option>
+						<option value="Liberia">Liberia</option>
+						<option value="Libya">Libya</option>
+						<option value="Liechtenstein">Liechtenstein</option>
+						<option value="Lithuania">Lithuania</option>
+						<option value="Luxembourg">Luxembourg</option>
+						<option value="Macau">Macau</option>
+						<option value="Macedonia">Macedonia</option>
+						<option value="Madagascar">Madagascar</option>
+						<option value="Malaysia">Malaysia</option>
+						<option value="Malawi">Malawi</option>
+						<option value="Maldives">Maldives</option>
+						<option value="Mali">Mali</option>
+						<option value="Malta">Malta</option>
+						<option value="Marshall Islands">Marshall Islands</option>
+						<option value="Martinique">Martinique</option>
+						<option value="Mauritania">Mauritania</option>
+						<option value="Mauritius">Mauritius</option>
+						<option value="Mayotte">Mayotte</option>
+						<option value="Mexico">Mexico</option>
+						<option value="Midway Islands">Midway Islands</option>
+						<option value="Moldova">Moldova</option>
+						<option value="Monaco">Monaco</option>
+						<option value="Mongolia">Mongolia</option>
+						<option value="Montserrat">Montserrat</option>
+						<option value="Morocco">Morocco</option>
+						<option value="Mozambique">Mozambique</option>
+						<option value="Myanmar">Myanmar</option>
+						<option value="Nambia">Nambia</option>
+						<option value="Nauru">Nauru</option>
+						<option value="Nepal">Nepal</option>
+						<option value="Netherland Antilles">Netherland Antilles</option>
+						<option value="Netherlands">Netherlands (Holland, Europe)</option>
+						<option value="Nevis">Nevis</option>
+						<option value="New Caledonia">New Caledonia</option>
+						<option value="New Zealand">New Zealand</option>
+						<option value="Nicaragua">Nicaragua</option>
+						<option value="Niger">Niger</option>
+						<option value="Nigeria">Nigeria</option>
+						<option value="Niue">Niue</option>
+						<option value="Norfolk Island">Norfolk Island</option>
+						<option value="Norway">Norway</option>
+						<option value="Oman">Oman</option>
+						<option value="Pakistan">Pakistan</option>
+						<option value="Palau Island">Palau Island</option>
+						<option value="Palestine">Palestine</option>
+						<option value="Panama">Panama</option>
+						<option value="Papua New Guinea">Papua New Guinea</option>
+						<option value="Paraguay">Paraguay</option>
+						<option value="Peru">Peru</option>
+						<option value="Phillipines">Philippines</option>
+						<option value="Pitcairn Island">Pitcairn Island</option>
+						<option value="Poland">Poland</option>
+						<option value="Portugal">Portugal</option>
+						<option value="Puerto Rico">Puerto Rico</option>
+						<option value="Qatar">Qatar</option>
+						<option value="Republic of Montenegro">Republic of Montenegro</option>
+						<option value="Republic of Serbia">Republic of Serbia</option>
+						<option value="Reunion">Reunion</option>
+						<option value="Romania">Romania</option>
+						<option value="Russia">Russia</option>
+						<option value="Rwanda">Rwanda</option>
+						<option value="St Barthelemy">St Barthelemy</option>
+						<option value="St Eustatius">St Eustatius</option>
+						<option value="St Helena">St Helena</option>
+						<option value="St Kitts-Nevis">St Kitts-Nevis</option>
+						<option value="St Lucia">St Lucia</option>
+						<option value="St Maarten">St Maarten</option>
+						<option value="St Pierre &amp; Miquelon">St Pierre &amp; Miquelon</option>
+						<option value="St Vincent &amp; Grenadines">St Vincent &amp; Grenadines</option>
+						<option value="Saipan">Saipan</option>
+						<option value="Samoa">Samoa</option>
+						<option value="Samoa American">Samoa American</option>
+						<option value="San Marino">San Marino</option>
+						<option value="Sao Tome &amp; Principe">Sao Tome &amp; Principe</option>
+						<option value="Saudi Arabia">Saudi Arabia</option>
+						<option value="Senegal">Senegal</option>
+						<option value="Serbia">Serbia</option>
+						<option value="Seychelles">Seychelles</option>
+						<option value="Sierra Leone">Sierra Leone</option>
+						<option value="Singapore">Singapore</option>
+						<option value="Slovakia">Slovakia</option>
+						<option value="Slovenia">Slovenia</option>
+						<option value="Solomon Islands">Solomon Islands</option>
+						<option value="Somalia">Somalia</option>
+						<option value="South Africa">South Africa</option>
+						<option value="Spain">Spain</option>
+						<option value="Sri Lanka">Sri Lanka</option>
+						<option value="Sudan">Sudan</option>
+						<option value="Suriname">Suriname</option>
+						<option value="Swaziland">Swaziland</option>
+						<option value="Sweden">Sweden</option>
+						<option value="Switzerland">Switzerland</option>
+						<option value="Syria">Syria</option>
+						<option value="Tahiti">Tahiti</option>
+						<option value="Taiwan">Taiwan</option>
+						<option value="Tajikistan">Tajikistan</option>
+						<option value="Tanzania">Tanzania</option>
+						<option value="Thailand">Thailand</option>
+						<option value="Togo">Togo</option>
+						<option value="Tokelau">Tokelau</option>
+						<option value="Tonga">Tonga</option>
+						<option value="Trinidad &amp; Tobago">Trinidad &amp; Tobago</option>
+						<option value="Tunisia">Tunisia</option>
+						<option value="Turkey">Turkey</option>
+						<option value="Turkmenistan">Turkmenistan</option>
+						<option value="Turks &amp; Caicos Is">Turks &amp; Caicos Is</option>
+						<option value="Tuvalu">Tuvalu</option>
+						<option value="Uganda">Uganda</option>
+						<option value="Ukraine">Ukraine</option>
+						<option value="United Arab Erimates">United Arab Emirates</option>
+						<option value="United Kingdom">United Kingdom</option>
+						<option value="Uraguay">Uruguay</option>
+						<option value="Uzbekistan">Uzbekistan</option>
+						<option value="Vanuatu">Vanuatu</option>
+						<option value="Vatican City State">Vatican City State</option>
+						<option value="Venezuela">Venezuela</option>
+						<option value="Vietnam">Vietnam</option>
+						<option value="Virgin Islands (Brit)">Virgin Islands (Brit)</option>
+						<option value="Virgin Islands (USA)">Virgin Islands (USA)</option>
+						<option value="Wake Island">Wake Island</option>
+						<option value="Wallis &amp; Futana Is">Wallis &amp; Futana Is</option>
+						<option value="Yemen">Yemen</option>
+						<option value="Zaire">Zaire</option>
+						<option value="Zambia">Zambia</option>
+						<option value="Zimbabwe">Zimbabwe</option>
+					</select>					
 					<br /><br/>
+					<strong>Institution*:</strong><br /><input type="text" id="institution" name="institution" style="width:400px" required /><br /><br />					
+					<strong>Office Name:</strong><br /><input type="text" id="officename" name="officename" style="width:400px" /><br /><br />
+					<strong>Website:</strong><br /><input type="text" id="website" name="website" style="width:400px" /><br /><br />
+					<strong>Social Media:</strong><br /><input type="text" id="socialmedia" name="socialmedia" style="width:400px" /><br /><br />
+					<strong>Brief Description of Work (50 words or less):</strong><br /><textarea id="skillset" name="skillset" style="width:400px"></textarea>
+					<br />
+					Total word count: <span id="display_count">0</span> words. Words left: <span id="word_left">50</span>					
+					<br /><br />
+					<strong>Tags:</strong><br />
+					<?php 
+							$args8 = array(
+								'taxonomy' => 'binm_tags',
+								'orderby' => 'name',
+								'field' => 'name',
+								'order' => 'ASC',
+								'hide_empty' => false
+							);
+
+							$categories = get_categories( $args8 );
+
+							foreach ( $categories as $category ){
+								echo '<label><input type="checkbox" id="type-'. $category->name . '" rel="'. $category->name . '" value="' . $category->name . '" name="binmtags[]"> '. $category->name . '</label><br />';
+							}
+							
+							
+					?>
+					<div id="newusertags"></div>
+					<input type="text" id="addtag" name="addtag" placeholder="Add your own tag here" /><button id="useraddtag">Add</button>
+					<br /><br />
+					
 					<?php if( function_exists( 'cptch_display_captcha_custom' ) ) { echo "<strong>Verification (spam prevention):</strong><br /><input type='hidden' name='cntctfrm_contact_action' value='true' />"; echo cptch_display_captcha_custom(); } ?>
-					<br /><br/><input type="submit" id="submit_natlmember_form" name="submit_natlmember_form" value="Submit" /><br /><br/>				
+					<br /><br/><input type="submit" id="submit_natlmember_form" name="submit_natlmember_form" value="Submit" /><br /><br/>	
+					<span style="font-style:italic">* required fields</span>
 				</form>	
 			</div>
 		<style>
@@ -278,15 +568,27 @@ function bi_natl_member_form_creation() {
 					if (!empty($_POST['institution'])) {
 						add_post_meta($newmemberid, 'institution', $_POST['institution']);
 					}						
-					if (!empty($_POST['audience'])) {
-						add_post_meta($newmemberid, 'audience', $_POST['audience']);
+					if (!empty($_POST['country'])) {
+						add_post_meta($newmemberid, 'country', $_POST['country']);
 					}	
-					if (!empty($_POST['tags'])) {
-						wp_set_post_tags( $newmemberid, $_POST['tags'] );						
+					if (!empty($_POST['socialmedia'])) {
+						add_post_meta($newmemberid, 'socialmedia', $_POST['socialmedia']);
+					}
+					if (!empty($_POST['website'])) {
+						add_post_meta($newmemberid, 'website', $_POST['website']);
+					}					
+					if (!empty($_POST['binmtags'])) {
+						foreach($_POST['binmtags'] as $check) {
+							wp_set_object_terms( $newmemberid, $check, 'binm_tags', true);							
+						}						
 					}				
 				
-					//Set latitude and longitude 
-					$strAddress = $_POST['street_address'] . " " . $_POST['city'] . " " . $_POST['state'] . " " . $_POST['zip_code'];
+					//Set latitude and longitude
+					if ($_POST['country'] == 'United States of America') {	
+						$strAddress = $_POST['street_address'] . " " . $_POST['city'] . " " . $_POST['state'] . " " . $_POST['zip_code'];
+					} else {
+						$strAddress = $_POST['street_address'] . " " . $_POST['city'] . " " . $_POST['country'];
+					}
 					if (strlen($strAddress) > 3) {
 						$geo = bi_natl_member_geocode($strAddress);
 						
@@ -360,13 +662,25 @@ function bi_natl_member_form_creation() {
 						} else {
 							delete_post_meta($update_post_id, 'institution');
 						}						
-						if (!empty($_POST['audience'])) {
-							update_post_meta($update_post_id, 'audience', $_POST['audience']);
+						if (!empty($_POST['country'])) {
+							update_post_meta($update_post_id, 'country', $_POST['country']);
 						} else {
-							delete_post_meta($update_post_id, 'audience');
-						}		
-						if (!empty($_POST['tags'])) {
-							wp_set_post_tags( $update_post_id, $_POST['tags'] );						
+							delete_post_meta($update_post_id, 'country');
+						}	
+						if (!empty($_POST['website'])) {
+							update_post_meta($update_post_id, 'website', $_POST['website']);
+						} else {
+							delete_post_meta($update_post_id, 'website');
+						}
+						if (!empty($_POST['socialmedia'])) {
+							update_post_meta($update_post_id, 'socialmedia', $_POST['socialmedia']);
+						} else {
+							delete_post_meta($update_post_id, 'socialmedia');
+						}						
+						if (!empty($_POST['binmtags'])) {
+							foreach($_POST['binmtags'] as $check2) {
+								wp_set_object_terms( $update_post_id, $check2, 'binm_tags', true);							
+							}											
 						} 
 						
 						//Set latitude and longitude 
@@ -475,7 +789,7 @@ function bi_natl_member_search_callback() {
 				'compare' => 'LIKE'
 			),
 			array(
-				'key' => 'audience',
+				'key' => 'country',
 				'value' => $keywordsearch,
 				'compare' => 'LIKE'
 			),
@@ -499,7 +813,8 @@ function bi_natl_member_search_callback() {
 				'value' => $keywordsearch,
 				'compare' => 'LIKE'
 			)			
-		)		
+		)
+
 	));
 	
 	$q3 = get_posts(array(
@@ -544,6 +859,14 @@ function bi_natl_member_search_callback() {
 		while ( $member_query->have_posts() ) {
 			$member_query->the_post();
 			$postid = get_the_ID();
+			$term_list = wp_get_post_terms( $postid, 'binm_tags' );
+			$termstr = "";
+			foreach($term_list as $term_single) {
+				$termstr = $termstr . $term_single->name . ", "; //do something here
+			}
+			if (strlen($termstr) > 0) {
+				$termstr = substr($termstr, 0, -2);
+			}
 			$result[] = array(
 				"id" => $postid,
 				"title" => get_the_title(),
@@ -557,10 +880,13 @@ function bi_natl_member_search_callback() {
 				"zipcode" => get_post_meta( $postid, 'zip_code' ),
 				"officename" => get_post_meta( $postid, 'officename' ),
 				"institution" => get_post_meta( $postid, 'institution' ),
-				"audience" => get_post_meta( $postid, 'audience' ),	
+				"country" => get_post_meta( $postid, 'country' ),
+				"website" => get_post_meta( $postid, 'website' ),
+				"socialmedia" => get_post_meta( $postid, 'socialmedia' ),				
 				"lat" => get_post_meta( $postid, 'bi_natl_member_lat' ),
 				"lng" => get_post_meta( $postid, 'bi_natl_member_long' ),
-				"admin" => $admin_check
+				"admin" => $admin_check,
+				"tags" => $termstr
 
 			);
 			
@@ -596,7 +922,9 @@ function bi_natl_member_edit_callback() {
 		"zipcode" => get_post_meta( $postid, 'zip_code' ),
 		"officename" => get_post_meta( $postid, 'officename' ),
 		"institution" => get_post_meta( $postid, 'institution' ),
-		"audience" => get_post_meta( $postid, 'audience' ),
+		"country" => get_post_meta( $postid, 'country' ),
+		"website" => get_post_meta( $postid, 'website' ),
+		"socialmedia" => get_post_meta( $postid, 'socialmedia' ),		
 		"tags" => get_the_tags( $postid )
 
 
@@ -634,7 +962,9 @@ function bi_natl_member_approve_callback() {
 		"zipcode" => get_post_meta( $postid, 'zip_code' ),
 		"officename" => get_post_meta( $postid, 'officename' ),
 		"institution" => get_post_meta( $postid, 'institution' ),
-		"audience" => get_post_meta( $postid, 'audience' )
+		"socialmedia" => get_post_meta( $postid, 'socialmedia' ),		
+		"website" => get_post_meta( $postid, 'website' ),		
+		"country" => get_post_meta( $postid, 'country' )
 	
 	);
 	
@@ -675,7 +1005,9 @@ function bi_natl_member_disapprove_callback() {
 		"zipcode" => get_post_meta( $postid, 'zip_code' ),
 		"officename" => get_post_meta( $postid, 'officename' ),
 		"institution" => get_post_meta( $postid, 'institution' ),
-		"audience" => get_post_meta( $postid, 'audience' )
+		"socialmedia" => get_post_meta( $postid, 'socialmedia' ),		
+		"website" => get_post_meta( $postid, 'website' ),		
+		"country" => get_post_meta( $postid, 'country' )
 	
 	);
 	
@@ -703,5 +1035,18 @@ function bi_natl_member_delete_callback() {
 	);
 	
 	echo json_encode($result);	
+	wp_die();
+}
+
+add_action( 'wp_ajax_bi_natl_member_addtag', 'bi_natl_member_addtag_callback' );
+add_action( 'wp_ajax_nopriv_bi_natl_member_addtag', 'bi_natl_member_addtag_callback' );
+
+function bi_natl_member_addtag_callback() {
+	do_action("init");
+	header('Content-type: application/json');
+	
+	$newterm = $_POST['term'];
+	wp_insert_term( $newterm, 'binm_tags' );	
+	
 	wp_die();
 }
