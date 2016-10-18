@@ -112,7 +112,25 @@ function bi_natl_member_form_creation() {
 				<h2>Search Members</h2>
 				<form id="searchform" action="" method="get">
 					<input type="text" id="keywordsearch" name="keywordsearch" placeholder="Search keywords here..." style="width:400px" /><br /><br />
+					<strong>Search by tag:</strong><br />
+					<?php
+							$args9 = array(
+								'taxonomy' => 'binm_tags',
+								'orderby' => 'name',
+								'field' => 'name',
+								'order' => 'ASC',
+								'hide_empty' => false
+							);
 
+							$binmtags = get_categories( $args9 );
+
+							foreach ( $binmtags as $binmtag ){
+								if ($binmtag->count > 0) {
+									echo '<label><input type="checkbox" id="type-'. $binmtag->name . '" rel="'. $binmtag->name . '" value="' . $binmtag->term_id . '" name="searchbinmtags" class="sally"> '. $binmtag->name . '</label><br />';
+								}
+							}
+					?>
+					<br />
 					<button type="submit">Search</button>				
 				</form>
 			</div>
@@ -823,14 +841,55 @@ function bi_natl_member_search_callback() {
 		'post_status' => 'publish',
 		'tag' => $keywordsearch
 	));
+	
+	$arrids = array_map('intval', $_GET['tags']);	
+	
+	$q4 = get_posts(array(
+		'post_type' => 'bi_natl_member',
+		'posts_per_page' => -1,
+		'post_status' => 'publish',	
+		'tax_query' => array(
+			array(
+				'taxonomy' => 'binm_tags',
+				'field' => 'term_id',
+				'terms' => $arrids
+			)
+		)
+	));
 
+	$bigmerge = array_merge( $q1, $q2, $q3, $q4 );
 	$first_merge = array_merge( $q1, $q2 );
-	$merged = array_merge( $first_merge, $q3);
+	$merged = array_merge( $first_merge, $q3 );
+	
+	//$merged2 = array_merge( $merged, $q4 );
 	
 	$post_ids = array();
-	foreach( $merged as $item ) {
-		$post_ids[] = $item->ID;
+	$combined = array();
+	$A = array();
+	$B = array();
+	if (!empty($keywordsearch) && !empty($q4)) {
+		$A = wp_list_pluck($merged, 'ID');
+		$Astr = array_map('strval', $A);
+		$B = wp_list_pluck($q4, 'ID');
+		$Bstr = array_map('strval', $B);
+		$combined = array_intersect($Astr, $Bstr);
+		foreach( $combined as $item ) {
+			$post_ids[] = (int)$item;
+		}		
+	} else if (!empty($keywordsearch)) {
+		foreach( $bigmerge as $item ) {
+			$post_ids[] = $item->ID;
+		}		
+	} else if (!empty($q4))  {
+		foreach( $q4 as $item ) {
+			$post_ids[] = $item->ID;
+		}				
+	} else {
+		foreach( $merged as $item ) {
+			$post_ids[] = $item->ID;
+		}		
 	}
+
 
 	$unique = array_unique($post_ids);	
 	
