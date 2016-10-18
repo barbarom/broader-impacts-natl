@@ -35,7 +35,8 @@ var map;
 		$("#mapdiv").hide();
 		$("#searchdiv").show();
 		$("#approvediv").hide();
-
+		$('input:checkbox').removeAttr('checked');
+		$("#keywordsearch").val('');
 	});		
 	$( "#approvecollaborator" ).click(function() {
 		$("#searchdiv").hide();
@@ -52,13 +53,18 @@ var map;
 	
 	$("#searchform").submit(function(e){		
 		e.preventDefault();
+		var tagarray = [];
+		$.each($('input[name="searchbinmtags"]:checked'), function(){            
+			tagarray.push($(this).val());
+		});
 		$("#resultsdiv").show();
 		$("#searchdiv").hide();
 		var data = {
 			action : "bi_natl_member_search",
-			keyword : $("#keywordsearch").val()			
+			keyword : $("#keywordsearch").val(),
+			tags : tagarray
 		}
-		//console.log(data);
+		console.log(data);
 		$.ajax({
 			url: MyAjax.ajaxurl,
 			data: data,
