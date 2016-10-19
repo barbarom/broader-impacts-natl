@@ -80,8 +80,9 @@ var map;
 					count = count + 1;
 					if (response[i].admin == "YES") {
 						//Commented out the edit/approve capabilities since approval is not needed for this plugin
+						html = "<div id='div_" + response[i].id + "' style='padding:15px;border:solid 2px #a9a9a9;background-color:#f5f5f5;width:70%;max-width:70%;'><div style='float:right;'><button onclick='editCollaborator(" + response[i].id + ")'>Edit</button></div><strong style='font-size:14pt;'>" + response[i].title + "</strong><br /><strong>Phone:</strong> " + response[i].phone + "<br /><strong>Email:</strong> <a href='mailto:" + response[i].email + "'>" + response[i].email + "</a><br /><strong>Street Address:</strong> " + response[i].streetaddress + "<br /><strong>City:</strong> " + response[i].city + "<br /><strong>State:</strong> " + response[i].state + "<br /><strong>ZIP Code:</strong> " + response[i].zipcode + "<br /><strong>Country:</strong> " + response[i].country + "<br /><strong>Academic Institution:</strong> " + response[i].institution + "<br /><strong>Office Name:</strong> " + response[i].officename + "<br /><strong>Website:</strong> " + response[i].website + "<br /><strong>Social Media:</strong> " + response[i].socialmedia + "<br /><strong>Description of Work:</strong> " + response[i].skillset + "<br /><strong>Tags:</strong> " + response[i].tags + "<br /></div><br />";					
 						//html = "<div id='div_" + response[i].id + "' style='padding:15px;border:solid 2px #a9a9a9;background-color:#f5f5f5;width:70%;max-width:70%;'><div style='float:right;'><button onclick='editCollaborator(" + response[i].id + ")'>Edit</button> <button onclick='disapproveCollaborator(" + response[i].id + ")'>Disapprove</button> <button onclick='deleteCollaborator(" + response[i].id + ")'>Delete</button></div><strong style='font-size:14pt;'>" + response[i].title + "</strong><br /><strong>Phone:</strong> " + response[i].phone + "<br /><strong>Email:</strong> <a href='mailto:" + response[i].email + "'>" + response[i].email + "</a><br /><strong>Street Address:</strong> " + response[i].streetaddress + "<br /><strong>City:</strong> " + response[i].city + "<br /><strong>State:</strong> " + response[i].state + "<br /><strong>ZIP Code:</strong> " + response[i].zipcode + "<br /><strong>Country:</strong> " + response[i].country + "<br /><strong>Academic Institution:</strong> " + response[i].institution + "<br /><strong>Office Name:</strong> " + response[i].officename + "<br /><strong>Website:</strong> " + response[i].website + "<br /><strong>Social Media:</strong> " + response[i].socialmedia + "<br /><strong>Description of Work:</strong> " + response[i].skillset + "<br /><strong>Tags:</strong> " + response[i].tags + "<br /></div><br />";					
-						html = "<div id='div_" + response[i].id + "' style='padding:15px;border:solid 2px #a9a9a9;background-color:#f5f5f5;width:70%;max-width:70%;'><strong style='font-size:14pt;'>" + response[i].title + "</strong><br /><strong>Phone:</strong> " + response[i].phone + "<br /><strong>Email:</strong> <a href='mailto:" + response[i].email + "'>" + response[i].email + "</a><br /><strong>Street Address:</strong> " + response[i].streetaddress + "<br /><strong>City:</strong> " + response[i].city + "<br /><strong>State:</strong> " + response[i].state + "<br /><strong>ZIP Code:</strong> " + response[i].zipcode + "<br /><strong>Country:</strong> " + response[i].country + "<br /><strong>Institution:</strong> " + response[i].institution + "<br /><strong>Office Name:</strong> " + response[i].officename + "<br /><strong>Website:</strong> " + response[i].website + "<br /><strong>Social Media:</strong> " + response[i].socialmedia + "<br /><strong>Description of Work:</strong> " + response[i].skillset + "<br /><strong>Tags:</strong> " + response[i].tags + "<br /></div><br />";					
+						//html = "<div id='div_" + response[i].id + "' style='padding:15px;border:solid 2px #a9a9a9;background-color:#f5f5f5;width:70%;max-width:70%;'><strong style='font-size:14pt;'>" + response[i].title + "</strong><br /><strong>Phone:</strong> " + response[i].phone + "<br /><strong>Email:</strong> <a href='mailto:" + response[i].email + "'>" + response[i].email + "</a><br /><strong>Street Address:</strong> " + response[i].streetaddress + "<br /><strong>City:</strong> " + response[i].city + "<br /><strong>State:</strong> " + response[i].state + "<br /><strong>ZIP Code:</strong> " + response[i].zipcode + "<br /><strong>Country:</strong> " + response[i].country + "<br /><strong>Institution:</strong> " + response[i].institution + "<br /><strong>Office Name:</strong> " + response[i].officename + "<br /><strong>Website:</strong> " + response[i].website + "<br /><strong>Social Media:</strong> " + response[i].socialmedia + "<br /><strong>Description of Work:</strong> " + response[i].skillset + "<br /><strong>Tags:</strong> " + response[i].tags + "<br /></div><br />";					
 						
 					} else {
 						html = "<div id='div_" + response[i].id + "' style='padding:15px;border:solid 2px #a9a9a9;background-color:#f5f5f5;width:70%;max-width:70%;'><strong style='font-size:14pt;'>" + response[i].title + "</strong><br /><strong>Phone:</strong> " + response[i].phone + "<br /><strong>Email:</strong> <a href='mailto:" + response[i].email + "'>" + response[i].email + "</a><br /><strong>Street Address:</strong> " + response[i].streetaddress + "<br /><strong>City:</strong> " + response[i].city + "<br /><strong>State:</strong> " + response[i].state + "<br /><strong>ZIP Code:</strong> " + response[i].zipcode + "<br /><strong>Country:</strong> " + response[i].country + "<br /><strong>Institution:</strong> " + response[i].institution + "<br /><strong>Office Name:</strong> " + response[i].officename + "<br /><strong>Website:</strong> " + response[i].website + "<br /><strong>Social Media:</strong> " + response[i].socialmedia + "<br /><strong>Description of Work:</strong> " + response[i].skillset + "<br /><strong>Tags:</strong> " + response[i].tags + "<br /></div><br />";					
@@ -115,41 +116,54 @@ var map;
 	});	
 	
 	function editCollaborator(collaboratorid) {
-		$("#collaborator_id").val(collaboratorid);
+		$("#member_id").val(collaboratorid);
 		$("#resultsdiv").hide();	
 		$("#formdiv").show();
-		$("#collaborator_form_title").html("Edit a Collaborator");
+		$("#member_form_title").html("Edit a Member");
 		
 		var data = {
-			action: 'bi_collaborator_edit',
+			action: 'bi_natl_member_edit',
 			id: collaboratorid
 		};		
 		
 		$.post(MyAjax.ajaxurl, data, function(response) {
-			//console.log(response);
-			var tagstr = "";
+			console.log(response);
+			var tagarr = [];			
+  
 			for(var i = 0; i < response.length ; i++) {					
-				$("#collaboratorname").val(response[i].title);
+				$("#membername").val(response[i].title);
 				$("#phone").val(response[i].phone[0]);
 				$("#email").val(response[i].email[0]);
 				$("#street_address").val(response[i].streetaddress[0]);
 				$("#city").val(response[i].city[0]);
 				$("#state").val(response[i].state[0]);
 				$("#zip_code").val(response[i].zipcode[0]);
-				$("#researchinterest").val(response[i].researchinterest);
-				$("#academicarea").val(response[i].academicarea[0]);
 				$("#country").val(response[i].country[0]);
+				$("#skillset").text(response[i].skillset);
+				$("#institution").val(response[i].institution[0]);
+				$("#officename").val(response[i].officename[0]);
 				$("#website").val(response[i].website[0]);
 				$("#socialmedia").val(response[i].socialmedia[0]);
 				var tags = response[i].tags;
-				for (var j = 0; j < tags.length; j++) {
-					tagstr = tagstr + tags[j].name + ", ";
-				}
-				
-				
+				for (var j = 0; j < tags.length; j++) {				
+					tagarr.push(tags[j].name);
+				}				
 			}
-			tagstr = tagstr.slice(0,-2);
-			$("#tags").val(tagstr);
+			console.log(tagarr);
+			
+			$("input[name='binmtags[]']").each( function() {
+				
+				if ($.inArray($(this).val(),tagarr) !== -1) {
+					$(this).attr('checked', true);
+				} else {
+					$(this).attr('checked', false);
+				}
+			});			
+			
+			
+			
+
+			
 		});			
 	}	
 	
