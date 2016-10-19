@@ -184,9 +184,12 @@ function bi_natl_member_form_creation() {
 						
 					}	
 				?>
-			</div>			
+			</div>
 			<div id="formdiv" style="display:none">
-				<h2 id="member_form_title">Add a member</h2>			
+			<?php 
+				if (is_user_logged_in()) {
+			?>			
+				<h2 id="member_form_title">Add Yourself as a Member</h2>			
 				<form id="member_form" name="member_form" action="" method="post">
 					<input type="hidden" id="member_id" name="member_id" value="" />
 					<strong>Name*:</strong><br /><input type="text" id="membername" name="membername" style="width:400px" required /><br /><br />
@@ -253,7 +256,7 @@ function bi_natl_member_form_creation() {
 					<br /><br/>
 					<strong>ZIP Code:</strong><br /><input type="text" id="zip_code" name="zip_code" style="width:100px" /><br /><br/>
 					<strong>Country:</strong><br />
-					<select name="country">
+					<select id="country" name="country">
 						<option value="">---Select---</option>
 						<option value="United States of America">United States of America</option>					
 						<option value="Afganistan">Afghanistan</option>
@@ -538,6 +541,11 @@ function bi_natl_member_form_creation() {
 					<br /><br/><input type="submit" id="submit_natlmember_form" name="submit_natlmember_form" value="Submit" /><br /><br/>	
 					<span style="font-style:italic">* required fields</span>
 				</form>	
+			<?php
+				} else {
+					echo "<h2>You must be logged in to use this form.</h2>";
+				}
+			?>				
 			</div>
 		<style>
 			#map img {max-width: none !important;}
@@ -697,10 +705,13 @@ function bi_natl_member_form_creation() {
 							delete_post_meta($update_post_id, 'socialmedia');
 						}						
 						if (!empty($_POST['binmtags'])) {
+							wp_delete_object_term_relationships( $update_post_id, 'binm_tags' );
 							foreach($_POST['binmtags'] as $check2) {
 								wp_set_object_terms( $update_post_id, $check2, 'binm_tags', true);							
 							}											
-						} 
+						} else {
+							wp_delete_object_term_relationships( $update_post_id, 'binm_tags' );
+						}
 						
 						//Set latitude and longitude 
 						$strAddress = $_POST['street_address'] . " " . $_POST['city'] . " " . $_POST['state'] . " " . $_POST['zip_code'];
@@ -779,6 +790,7 @@ function bi_natl_member_search_callback() {
 	);
 	$current_user = wp_get_current_user();
 	$current_email = $current_user->user_email;
+	$current_userid = $current_user->ID;
 	$allowed = false;
 	if (in_array($current_email,$bi_admins)) {
 		$allowed = true;
@@ -906,11 +918,11 @@ function bi_natl_member_search_callback() {
 		//Check to see if user is admin. This will determine whether the user can edit a member.
 		//********CHANGE THIS TO SUIT THE ROLE OF SOMEONE WHO CAN EDIT memberS, IF NEEDED*********	
 		$admin_check="";
-		if ($allowed) {
-			$admin_check = "YES";
-		} else {
-			$admin_check = "NO";
-		}
+		// if ($allowed) {
+			// $admin_check = "YES";
+		// } else {
+			// $admin_check = "NO";
+		// }
 		
 			
 		
@@ -919,6 +931,13 @@ function bi_natl_member_search_callback() {
 		while ( $member_query->have_posts() ) {
 			$member_query->the_post();
 			$postid = get_the_ID();
+			$authorid = get_the_author_meta( 'ID' );
+			if ($authorid == $current_userid) {
+				$admin_check = "YES";
+			} else {
+				$admin_check = "NO";
+			}
+			
 			$term_list = wp_get_post_terms( $postid, 'binm_tags' );
 			$termstr = "";
 			foreach($term_list as $term_single) {
@@ -985,7 +1004,7 @@ function bi_natl_member_edit_callback() {
 		"country" => get_post_meta( $postid, 'country' ),
 		"website" => get_post_meta( $postid, 'website' ),
 		"socialmedia" => get_post_meta( $postid, 'socialmedia' ),		
-		"tags" => get_the_tags( $postid )
+		"tags" => wp_get_object_terms( $postid, 'binm_tags' )
 
 
 	);
