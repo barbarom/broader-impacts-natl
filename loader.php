@@ -101,7 +101,7 @@ function bi_natl_member_form_creation() {
 				?>
 					
 					<form id="recalc_form" name="recalc_form" action="" method="post" onsubmit="return alert('Map Coordinates have been re-calculated!')">
-						<div style="float:right;"><input type="submit" id="runlatlongcalc" name="runlatlongcalc" value="Re-calculate Map Coordinates" /></div>
+						<div style="float:right;display:none;"><input type="submit" id="runlatlongcalc" name="runlatlongcalc" value="Re-calculate Map Coordinates" /></div>
 					</form>		
 				<?php
 					}
@@ -627,8 +627,9 @@ function bi_natl_member_form_creation() {
 							'gillos@missouri.edu',
 							'svq87@mail.missouri.edu'
 						);
-						$mailcontent = "The following member needs your approval:<br /><br /><strong>" . $_POST['membername'] . "</strong>";							
-						wp_mail( $to, 'A New Broader Impacts member Needs Approval', $mailcontent );
+						$mailcontent = "The following member needs your approval:<br /><br /><strong>" . $_POST['membername'] . "</strong>";
+						//I commented out the send mail function because the approval process is not used.						
+						//wp_mail( $to, 'A New Broader Impacts member Needs Approval', $mailcontent );
 					}					
 				} else {
 						$update_post_id = $_POST['member_id'];
