@@ -6,12 +6,12 @@ Author: Michael C. Barbaro (CARES)
 Description: This plugin creates a custom post type, taxonomies, form and map for the Broader Impacts National Membership Database.
 */
 
-	
+
 add_action( 'init', 'register_cpt_bi_natl_membership' );
 
 function register_cpt_bi_natl_membership() {
 
-    $labels = array( 
+    $labels = array(
         'name' => _x( 'BI Natl Members', 'bi_natl_member' ),
         'singular_name' => _x( 'BI Natl Member', 'bi_natl_member' ),
         'add_new' => _x( 'Add New BI Natl Member', 'bi_natl_member' ),
@@ -27,7 +27,7 @@ function register_cpt_bi_natl_membership() {
         'menu_name' => _x( 'BI Natl Members', 'bi_natl_member' ),
     );
 
-    $args = array( 
+    $args = array(
         'labels' => $labels,
         'hierarchical' => false,
         'public' => true,
@@ -52,32 +52,32 @@ function create_binm_taxonomy() {
 }
 
 function bi_natl_member_search_scripts() {
-	wp_enqueue_script( 'bi_natl_member_search2', plugin_dir_url(__FILE__) . 'js/masked_input.js', array('jquery'), '1.0.0', true ); 
-	wp_enqueue_script( 'bi_natl_member_search', plugin_dir_url(__FILE__) . 'js/bi-natlmember-search.js', array('jquery'), '1.0.0', true ); 
+	wp_enqueue_script( 'bi_natl_member_search2', plugin_dir_url(__FILE__) . 'js/masked_input.js', array('jquery'), '1.0.0', true );
+	wp_enqueue_script( 'bi_natl_member_search', plugin_dir_url(__FILE__) . 'js/bi-natlmember-search.js', array('jquery'), '1.0.0', true );
 	wp_enqueue_script( 'bi_natl_member_search3', plugin_dir_url(__FILE__) . 'js/markerclusterer.js', array('jquery'), '1.0.0', true );
 
-	// wp_enqueue_script( 'bi_natl_member_search', plugin_dir_url(__FILE__) . '/js/jquery.tablesorter.js', array('jquery'), '1.0.0', true ); 	
+	// wp_enqueue_script( 'bi_natl_member_search', plugin_dir_url(__FILE__) . '/js/jquery.tablesorter.js', array('jquery'), '1.0.0', true );
 	wp_enqueue_style( 'bi_natl_member_search', plugin_dir_url(__FILE__) . 'css/tables.css', array(), '1.32' );
-	
+
 	$translation_array = array( 'siteUrl' => get_site_url() );
 	wp_localize_script( 'bi_natl_member_search', 'object1', $translation_array );
-	wp_localize_script( 'bi_natl_member_search', 'MyAjax', array('ajaxurl' => admin_url('admin-ajax.php')));	
+	wp_localize_script( 'bi_natl_member_search', 'MyAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
 }
 
-function bi_natl_member_google_maps_script() {	
-		wp_register_script( 'bi-natlmember-google-maps', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAj8tXV6eDAAU9a9p6RhkYns8JciFwF-W8&callback=initialize', array(), '1.0.0', true );	
+function bi_natl_member_google_maps_script() {
+		wp_register_script( 'bi-natlmember-google-maps', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAj8tXV6eDAAU9a9p6RhkYns8JciFwF-W8&callback=initialize', array(), '1.0.0', true );
 }
 add_action('wp_enqueue_scripts', 'bi_natl_member_google_maps_script');
 
 function bi_natl_member_form_creation() {
 	bi_natl_member_search_scripts();
-	
+
 	$bi_admins = array(
 		"barbarom@missouri.edu",
 		"vassmers@missouri.edu",
 		"renoes@missouri.edu",
 		"gillos@missouri.edu",
-		"svq87@mail.missouri.edu"			
+		"svq87@mail.missouri.edu"
 	);
 	$current_user = wp_get_current_user();
 	$current_email = $current_user->user_email;
@@ -85,13 +85,13 @@ function bi_natl_member_form_creation() {
 	if (in_array($current_email,$bi_admins)) {
 		$allowed = true;
 	}
-	
+
 	wp_enqueue_script( 'bi-natlmember-google-maps' );
 
-	ob_start();		
+	ob_start();
 ?>
 
-			
+
 			<div id="buttonsdiv" style="border-bottom:solid 1px #e0e0e0;height:40px;padding-top:30px;">
 				<div style="float:left;"><button id="newsearch">New Search</button></div>
 				<div style="float:right;margin-left:15px;"><button id="addnewmember">Add Yourself as a Member</button></div>
@@ -99,15 +99,15 @@ function bi_natl_member_form_creation() {
 					//********CHANGE THIS TO SUIT THE ROLE OF SOMEONE WHO CAN APPROVE memberS, IF NEEDED*********
 					if ($allowed) {
 				?>
-					
+
 					<form id="recalc_form" name="recalc_form" action="" method="post" onsubmit="return alert('Map Coordinates have been re-calculated!')">
 						<div style="float:right;display:none;"><input type="submit" id="runlatlongcalc" name="runlatlongcalc" value="Re-calculate Map Coordinates" /></div>
-					</form>		
+					</form>
 				<?php
 					}
-				?>		
+				?>
 			</div>
-			
+
 			<div id="searchdiv">
 				<h2>Search Members</h2>
 				<form id="searchform" action="" method="get">
@@ -131,12 +131,12 @@ function bi_natl_member_form_creation() {
 							}
 					?>
 					<br />
-					<button type="submit">Search</button>				
+					<button type="submit">Search</button>
 				</form>
 			</div>
 			<div id="resultsdiv" style="display:none">
 				<h2>Member Results</h2>
-				<div id="resultsfound"></div>		
+				<div id="resultsfound"></div>
 				<div id="showmapdiv"><button id="showmap" type="button">Map the Results</button></div>
 				<br />
 				<div id="resultboxes">
@@ -145,24 +145,24 @@ function bi_natl_member_form_creation() {
 				<div id="resulttable">
 					<div id="rtable"></div>
 				</div>
-			</div>		
-			<div id="mapdiv" style="display:none">	
+			</div>
+			<div id="mapdiv" style="display:none">
 				<br />
 				<div>
 					<div style="float:left;"><h2>Member Locations</h2></div>
 					<div style="float:right;"><button id="maptolist">Return to List</button></div>
-				</div>	
-				<br /><br />		
+				</div>
+				<br /><br />
 				<div id="map" style="width:950px;height:600px;"></div>
 			</div>
 			<div id="approvediv" style="display:none">
 				<h2>Approve Member(s)</h2>
-				<?php		
+				<?php
 					$approval_args = array(
 						'post_type' => 'bi_natl_member',
 						'posts_per_page' => -1,
 						'post_status' => 'draft'
-					);			
+					);
 					$approval_query = new WP_Query( $approval_args );
 					while ( $approval_query->have_posts() ) {
 						$approval_query->the_post();
@@ -170,26 +170,26 @@ function bi_natl_member_form_creation() {
 						$approval_title = get_the_title();
 						$skillset = get_the_content();
 						$officename = get_post_meta( $approval_postid, 'officename', true );
-						$institution = get_post_meta( $approval_postid, 'institution', true );						
+						$institution = get_post_meta( $approval_postid, 'institution', true );
 						$phone = get_post_meta( $approval_postid, 'phone', true );
 						$email = get_post_meta( $approval_postid, 'email', true );
 						$streetaddress = get_post_meta( $approval_postid, 'street_address', true );
 						$city = get_post_meta( $approval_postid, 'city', true );
 						$state = get_post_meta( $approval_postid, 'state', true );
 						$country = get_post_meta( $approval_postid, 'country', true );
-						$zipcode = get_post_meta( $approval_postid, 'zip_code', true );	
+						$zipcode = get_post_meta( $approval_postid, 'zip_code', true );
 						$socialmedia = get_post_meta( $approval_postid, 'socialmedia', true );
-						$website = get_post_meta( $approval_postid, 'website', true );						
-						echo "<div id='" . $approval_postid . "' style='padding:15px;border:solid 2px #a9a9a9;background-color:#FAF0E6;width:70%;max-width:70%;'><div style='float:right;'><button style='margin-left:5px;' onclick='approvemember(" . $approval_postid . ")'>Approve</button></div><div style='float:right;'><button style='margin-left:5px;' onclick='deletemember(" . $approval_postid . ")'>Delete</button></div><strong style='font-size:14pt;'>" . $approval_title . "</strong><br /><strong>Phone:</strong> " . $phone . "<br /><strong>Email:</strong> <a href='mailto:" . $email . "'>" . $email . "</a><br /><strong>Street Address:</strong> " . $streetaddress . "<br /><strong>City:</strong> " . $city . "<br /><strong>State:</strong> " . $state . "<br /><strong>ZIP Code:</strong> " . $zipcode . "<br /><strong>Office Name:</strong> " . $officename . "<br /><strong>Academic Institution: " . $institution . "</strong><strong>Your Skillset:</strong> " . $skillset . "<br /><strong>Audience:</strong> " . $audience . "<br /></div><br />";					
-						
-					}	
+						$website = get_post_meta( $approval_postid, 'website', true );
+						echo "<div id='" . $approval_postid . "' style='padding:15px;border:solid 2px #a9a9a9;background-color:#FAF0E6;width:70%;max-width:70%;'><div style='float:right;'><button style='margin-left:5px;' onclick='approvemember(" . $approval_postid . ")'>Approve</button></div><div style='float:right;'><button style='margin-left:5px;' onclick='deletemember(" . $approval_postid . ")'>Delete</button></div><strong style='font-size:14pt;'>" . $approval_title . "</strong><br /><strong>Phone:</strong> " . $phone . "<br /><strong>Email:</strong> <a href='mailto:" . $email . "'>" . $email . "</a><br /><strong>Street Address:</strong> " . $streetaddress . "<br /><strong>City:</strong> " . $city . "<br /><strong>State:</strong> " . $state . "<br /><strong>ZIP Code:</strong> " . $zipcode . "<br /><strong>Office Name:</strong> " . $officename . "<br /><strong>Academic Institution: " . $institution . "</strong><strong>Your Skillset:</strong> " . $skillset . "<br /><strong>Audience:</strong> " . $audience . "<br /></div><br />";
+
+					}
 				?>
 			</div>
 			<div id="formdiv" style="display:none">
-			<?php 
+			<?php
 				if (is_user_logged_in()) {
-			?>			
-				<h2 id="member_form_title">Add Yourself as a Member</h2>			
+			?>
+				<h2 id="member_form_title">Add Yourself as a Member</h2>
 				<form id="member_form" name="member_form" action="" method="post">
 					<input type="hidden" id="member_id" name="member_id" value="" />
 					<strong>Name*:</strong><br /><input type="text" id="membername" name="membername" style="width:400px" required /><br /><br />
@@ -199,8 +199,8 @@ function bi_natl_member_form_creation() {
 					<strong>City*:</strong><br /><input type="text" id="city" name="city" style="width:400px" required /><br /><br />
 					<strong>State*:</strong><br />
 					<select id="state" name="state" required>
-						<option value="" selected>---Select---</option>	
-							<option value="n/a">N/A (Outside the U.S.)</option>						
+						<option value="" selected>---Select---</option>
+							<option value="n/a">N/A (Outside the U.S.)</option>
 							<option value="Alabama">Alabama</option>
 							<option value="Alaska">Alaska</option>
 							<option value="Arizona">Arizona</option>
@@ -251,14 +251,14 @@ function bi_natl_member_form_creation() {
 							<option value="Washington">Washington</option>
 							<option value="West Virginia">West Virginia</option>
 							<option value="Wisconsin">Wisconsin</option>
-							<option value="Wyoming">Wyoming</option>		
+							<option value="Wyoming">Wyoming</option>
 					</select>
 					<br /><br/>
 					<strong>ZIP Code:</strong><br /><input type="text" id="zip_code" name="zip_code" style="width:100px" /><br /><br/>
 					<strong>Country:</strong><br />
 					<select id="country" name="country">
 						<option value="">---Select---</option>
-						<option value="United States of America">United States of America</option>					
+						<option value="United States of America">United States of America</option>
 						<option value="Afganistan">Afghanistan</option>
 						<option value="Albania">Albania</option>
 						<option value="Algeria">Algeria</option>
@@ -505,18 +505,18 @@ function bi_natl_member_form_creation() {
 						<option value="Zaire">Zaire</option>
 						<option value="Zambia">Zambia</option>
 						<option value="Zimbabwe">Zimbabwe</option>
-					</select>					
+					</select>
 					<br /><br/>
-					<strong>Institution*:</strong><br /><input type="text" id="institution" name="institution" style="width:400px" required /><br /><br />					
+					<strong>Institution*:</strong><br /><input type="text" id="institution" name="institution" style="width:400px" required /><br /><br />
 					<strong>Office Name:</strong><br /><input type="text" id="officename" name="officename" style="width:400px" /><br /><br />
 					<strong>Website:</strong><br /><input type="text" id="website" name="website" style="width:400px" /><br /><br />
 					<strong>Social Media:</strong><br /><input type="text" id="socialmedia" name="socialmedia" style="width:400px" /><br /><br />
 					<strong>Brief Description of Work (50 words or less):</strong><br /><textarea id="skillset" name="skillset" style="width:400px"></textarea>
 					<br />
-					Total word count: <span id="display_count">0</span> words. Words left: <span id="word_left">50</span>					
+					Total word count: <span id="display_count">0</span> words. Words left: <span id="word_left">50</span>
 					<br /><br />
 					<strong>Tags:</strong><br />
-					<?php 
+					<?php
 							$args8 = array(
 								'taxonomy' => 'binm_tags',
 								'orderby' => 'name',
@@ -530,34 +530,34 @@ function bi_natl_member_form_creation() {
 							foreach ( $categories as $category ){
 								echo '<label><input type="checkbox" id="type-'. $category->name . '" rel="'. $category->name . '" value="' . $category->name . '" name="binmtags[]"> '. $category->name . '</label><br />';
 							}
-							
-							
+
+
 					?>
 					<div id="newusertags"></div>
 					<input type="text" id="addtag" name="addtag" placeholder="Add your own tag here" /><button id="useraddtag">Add</button>
 					<br /><br />
-					
+
 					<?php if( function_exists( 'cptch_display_captcha_custom' ) ) { echo "<strong>Verification (spam prevention):</strong><br /><input type='hidden' name='cntctfrm_contact_action' value='true' />"; echo cptch_display_captcha_custom(); } ?>
-					<br /><br/><input type="submit" id="submit_natlmember_form" name="submit_natlmember_form" value="Submit" /><br /><br/>	
+					<br /><br/><input type="submit" id="submit_natlmember_form" name="submit_natlmember_form" value="Submit" /><br /><br/>
 					<span style="font-style:italic">* required fields</span>
-				</form>	
+				</form>
 			<?php
 				} else {
 					echo "<h2>You must be logged in to use this form.</h2>";
 				}
-			?>				
+			?>
 			</div>
 		<style>
 			#map img {max-width: none !important;}
-		</style>	
+		</style>
 
 <?php
 		if ($_POST["submit_natlmember_form"]) {
 			if( function_exists( 'cptch_check_custom_form' ) && cptch_check_custom_form() !== true ) {
 				echo "<br /><br /><span style='color:red'>The CAPTCHA answer is incorrect.</span><br /><br />";
 			} else {
-			
-				if (empty($_POST['member_id'])) {			
+
+				if (empty($_POST['member_id'])) {
 					$post = array();
 
 
@@ -572,83 +572,83 @@ function bi_natl_member_form_creation() {
 
 					if (!empty($_POST['phone'])) {
 						add_post_meta($newmemberid, 'phone', $_POST['phone']);
-					}		
+					}
 					if (!empty($_POST['email'])) {
 						add_post_meta($newmemberid, 'email', $_POST['email']);
-					}	
+					}
 					if (!empty($_POST['street_address'])) {
 						add_post_meta($newmemberid, 'street_address', $_POST['street_address']);
-					}	
+					}
 					if (!empty($_POST['city'])) {
 						add_post_meta($newmemberid, 'city', $_POST['city']);
-					}	
+					}
 					if (!empty($_POST['state'])) {
 						add_post_meta($newmemberid, 'state', $_POST['state']);
-					}	
+					}
 					if (!empty($_POST['zip_code'])) {
 						add_post_meta($newmemberid, 'zip_code', $_POST['zip_code']);
-					}	
+					}
 					if (!empty($_POST['officename'])) {
 						add_post_meta($newmemberid, 'officename', $_POST['officename']);
-					}	
+					}
 					if (!empty($_POST['institution'])) {
 						add_post_meta($newmemberid, 'institution', $_POST['institution']);
-					}						
+					}
 					if (!empty($_POST['country'])) {
 						add_post_meta($newmemberid, 'country', $_POST['country']);
-					}	
+					}
 					if (!empty($_POST['socialmedia'])) {
 						add_post_meta($newmemberid, 'socialmedia', $_POST['socialmedia']);
 					}
 					if (!empty($_POST['website'])) {
 						add_post_meta($newmemberid, 'website', $_POST['website']);
-					}					
+					}
 					if (!empty($_POST['binmtags'])) {
 						foreach($_POST['binmtags'] as $check) {
-							wp_set_object_terms( $newmemberid, $check, 'binm_tags', true);							
-						}						
-					}				
-				
+							wp_set_object_terms( $newmemberid, $check, 'binm_tags', true);
+						}
+					}
+
 					//Set latitude and longitude
-					if ($_POST['country'] == 'United States of America') {	
+					if ($_POST['country'] == 'United States of America') {
 						$strAddress = $_POST['street_address'] . " " . $_POST['city'] . " " . $_POST['state'] . " " . $_POST['zip_code'];
 					} else {
 						$strAddress = $_POST['street_address'] . " " . $_POST['city'] . " " . $_POST['country'];
 					}
 					if (strlen($strAddress) > 3) {
 						$geo = bi_natl_member_geocode($strAddress);
-						
+
 						if (!empty($geo)) {
 							$latitude = $geo['latitude'];
 							$longitude = $geo['longitude'];
 
 							add_post_meta($newmemberid, 'bi_natl_member_lat', $latitude);
-							add_post_meta($newmemberid, 'bi_natl_member_long', $longitude);								
+							add_post_meta($newmemberid, 'bi_natl_member_long', $longitude);
 						}
 					}
 					//Email admins that a new resource has been created and needs approval. Only send if created by non-admin
 					if (!$allowed) {
 						//Add the appropriate emails here for those who are going to approve resources.
-						$to = array(						
+						$to = array(
 							'vassmers@missouri.edu',
 							'renoes@missouri.edu',
 							'gillos@missouri.edu',
 							'svq87@mail.missouri.edu'
 						);
 						$mailcontent = "The following member needs your approval:<br /><br /><strong>" . $_POST['membername'] . "</strong>";
-						//I commented out the send mail function because the approval process is not used.						
+						//I commented out the send mail function because the approval process is not used.
 						//wp_mail( $to, 'A New Broader Impacts member Needs Approval', $mailcontent );
-					}					
+					}
 				} else {
 						$update_post_id = $_POST['member_id'];
 						$post = array(
 								'ID' => $update_post_id,
 								'post_content' => $_POST['skillset'],
-								'post_title' => $_POST['membername']						
+								'post_title' => $_POST['membername']
 						);
-							
+
 						wp_update_post( $post );
-						
+
 						if (!empty($_POST['phone'])) {
 							update_post_meta($update_post_id, 'phone', $_POST['phone']);
 						} else {
@@ -688,12 +688,12 @@ function bi_natl_member_form_creation() {
 							update_post_meta($update_post_id, 'institution', $_POST['institution']);
 						} else {
 							delete_post_meta($update_post_id, 'institution');
-						}						
+						}
 						if (!empty($_POST['country'])) {
 							update_post_meta($update_post_id, 'country', $_POST['country']);
 						} else {
 							delete_post_meta($update_post_id, 'country');
-						}	
+						}
 						if (!empty($_POST['website'])) {
 							update_post_meta($update_post_id, 'website', $_POST['website']);
 						} else {
@@ -703,37 +703,37 @@ function bi_natl_member_form_creation() {
 							update_post_meta($update_post_id, 'socialmedia', $_POST['socialmedia']);
 						} else {
 							delete_post_meta($update_post_id, 'socialmedia');
-						}						
+						}
 						if (!empty($_POST['binmtags'])) {
 							wp_delete_object_term_relationships( $update_post_id, 'binm_tags' );
 							foreach($_POST['binmtags'] as $check2) {
-								wp_set_object_terms( $update_post_id, $check2, 'binm_tags', true);							
-							}											
+								wp_set_object_terms( $update_post_id, $check2, 'binm_tags', true);
+							}
 						} else {
 							wp_delete_object_term_relationships( $update_post_id, 'binm_tags' );
 						}
-						
-						//Set latitude and longitude 
+
+						//Set latitude and longitude
 						$strAddress = $_POST['street_address'] . " " . $_POST['city'] . " " . $_POST['state'] . " " . $_POST['zip_code'];
 						if (strlen($strAddress) > 3) {
 							$geo = bi_natl_member_geocode($strAddress);
-							
+
 							if (!empty($geo)) {
 								$latitude = $geo['latitude'];
 								$longitude = $geo['longitude'];
 								//var_dump($geo['latitude']);
 								update_post_meta($update_post_id, 'bi_natl_member_lat', $latitude);
-								update_post_meta($update_post_id, 'bi_natl_member_long', $longitude);								
+								update_post_meta($update_post_id, 'bi_natl_member_long', $longitude);
 							}
-						}				
-			
+						}
+
 				}
 			?>
 				<script>
 					alert("Your entry has been saved!");
 				</script>
 			<?php
-			
+
 			}
 
 		return ob_get_clean();
@@ -742,37 +742,37 @@ function bi_natl_member_form_creation() {
 add_shortcode('bi_natl_member_form', 'bi_natl_member_form_creation');
 
 // function to geocode address, it will return false if unable to geocode address
-function bi_natl_member_geocode($address){ 
+function bi_natl_member_geocode($address){
 
-    //$url = "https://maps.googleapis.com/maps/api/geocode/json?address={$address2}&key=AIzaSyDzsrDVBlOfzDeyAGpJO35qdOEFKIgT9ZA"; 
+    //$url = "https://maps.googleapis.com/maps/api/geocode/json?address={$address2}&key=AIzaSyDzsrDVBlOfzDeyAGpJO35qdOEFKIgT9ZA";
 
-	
+
    $address = str_replace (" ", "+", urlencode($address));
    $details_url = "http://maps.googleapis.com/maps/api/geocode/json?address=".$address."&sensor=false";
- 
+
    $ch = curl_init();
    curl_setopt($ch, CURLOPT_URL, $details_url);
    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
    $response = json_decode(curl_exec($ch), true);
- 
+
    // If Status Code is ZERO_RESULTS, OVER_QUERY_LIMIT, REQUEST_DENIED or INVALID_REQUEST
    if ($response['status'] != 'OK') {
     return null;
    }
- 
+
    //print_r($response);
    $geometry = $response['results'][0]['geometry'];
- 
+
     $longitude = $geometry['location']['lng'];
     $latitude = $geometry['location']['lat'];
- 
+
     $array = array(
         'latitude' => $geometry['location']['lat'],
         'longitude' => $geometry['location']['lng'],
         'location_type' => $geometry['location_type'],
     );
- 
-    return $array;	
+
+    return $array;
 
 }
 
@@ -786,7 +786,7 @@ function bi_natl_member_search_callback() {
 		"vassmers@missouri.edu",
 		"renoes@missouri.edu",
 		"gillos@missouri.edu",
-		"svq87@mail.missouri.edu"		
+		"svq87@mail.missouri.edu"
 	);
 	$current_user = wp_get_current_user();
 	$current_email = $current_user->user_email;
@@ -794,11 +794,11 @@ function bi_natl_member_search_callback() {
 	$allowed = false;
 	if (in_array($current_email,$bi_admins)) {
 		$allowed = true;
-	}	
+	}
 
-	do_action("init");
+	// do_action("init");
 	header('Content-type: application/json');
-	
+
 	$keywordsearch = sanitize_text_field( $_GET['keyword'] );
 
 	$q1 = get_posts(array(
@@ -807,7 +807,7 @@ function bi_natl_member_search_callback() {
 		'post_status' => 'publish',
 		's' => $keywordsearch
 	));
-	
+
 	$q2 = get_posts(array(
 		'post_type' => 'bi_natl_member',
 		'posts_per_page' => -1,
@@ -828,7 +828,7 @@ function bi_natl_member_search_callback() {
 				'key' => 'city',
 				'value' => $keywordsearch,
 				'compare' => 'LIKE'
-			),			
+			),
 			array(
 				'key' => 'state',
 				'value' => $keywordsearch,
@@ -838,29 +838,29 @@ function bi_natl_member_search_callback() {
 				'key' => 'institution',
 				'value' => $keywordsearch,
 				'compare' => 'LIKE'
-			),	
+			),
 			array(
 				'key' => 'skillset',
 				'value' => $keywordsearch,
 				'compare' => 'LIKE'
-			)			
+			)
 		)
 
 	));
-	
+
 	$q3 = get_posts(array(
 		'post_type' => 'bi_natl_member',
 		'posts_per_page' => -1,
 		'post_status' => 'publish',
 		'tag' => $keywordsearch
 	));
-	
-	$arrids = array_map('intval', $_GET['tags']);	
-	
+
+	$arrids = array_map('intval', $_GET['tags']);
+
 	$q4 = get_posts(array(
 		'post_type' => 'bi_natl_member',
 		'posts_per_page' => -1,
-		'post_status' => 'publish',	
+		'post_status' => 'publish',
 		'tax_query' => array(
 			array(
 				'taxonomy' => 'binm_tags',
@@ -873,9 +873,9 @@ function bi_natl_member_search_callback() {
 	$bigmerge = array_merge( $q1, $q2, $q3, $q4 );
 	$first_merge = array_merge( $q1, $q2 );
 	$merged = array_merge( $first_merge, $q3 );
-	
+
 	//$merged2 = array_merge( $merged, $q4 );
-	
+
 	$post_ids = array();
 	$combined = array();
 	$A = array();
@@ -888,24 +888,24 @@ function bi_natl_member_search_callback() {
 		$combined = array_intersect($Astr, $Bstr);
 		foreach( $combined as $item ) {
 			$post_ids[] = (int)$item;
-		}		
+		}
 	} else if (!empty($keywordsearch)) {
 		foreach( $bigmerge as $item ) {
 			$post_ids[] = $item->ID;
-		}		
+		}
 	} else if (!empty($q4))  {
 		foreach( $q4 as $item ) {
 			$post_ids[] = $item->ID;
-		}				
+		}
 	} else {
 		foreach( $merged as $item ) {
 			$post_ids[] = $item->ID;
-		}		
+		}
 	}
 
 
-	$unique = array_unique($post_ids);	
-	
+	$unique = array_unique($post_ids);
+
 	$result = array();
 	if (!empty($unique)) {
 		$args = array(
@@ -914,20 +914,20 @@ function bi_natl_member_search_callback() {
 			'post_status' => 'publish',
 			'post__in' => $unique
 		);
-		
+
 		//Check to see if user is admin. This will determine whether the user can edit a member.
-		//********CHANGE THIS TO SUIT THE ROLE OF SOMEONE WHO CAN EDIT memberS, IF NEEDED*********	
+		//********CHANGE THIS TO SUIT THE ROLE OF SOMEONE WHO CAN EDIT memberS, IF NEEDED*********
 		$admin_check="";
 		// if ($allowed) {
 			// $admin_check = "YES";
 		// } else {
 			// $admin_check = "NO";
 		// }
-		
-			
-		
+
+
+
 		$member_query = new WP_Query( $args );
-		
+
 		while ( $member_query->have_posts() ) {
 			$member_query->the_post();
 			$postid = get_the_ID();
@@ -937,7 +937,7 @@ function bi_natl_member_search_callback() {
 			} else {
 				$admin_check = "NO";
 			}
-			
+
 			$term_list = wp_get_post_terms( $postid, 'binm_tags' );
 			$termstr = "";
 			foreach($term_list as $term_single) {
@@ -961,17 +961,17 @@ function bi_natl_member_search_callback() {
 				"institution" => get_post_meta( $postid, 'institution' ),
 				"country" => get_post_meta( $postid, 'country' ),
 				"website" => get_post_meta( $postid, 'website' ),
-				"socialmedia" => get_post_meta( $postid, 'socialmedia' ),				
+				"socialmedia" => get_post_meta( $postid, 'socialmedia' ),
 				"lat" => get_post_meta( $postid, 'bi_natl_member_lat' ),
 				"lng" => get_post_meta( $postid, 'bi_natl_member_long' ),
 				"admin" => $admin_check,
 				"tags" => $termstr
 
 			);
-			
+
 		}
 	}
-	echo json_encode($result);	
+	echo json_encode($result);
 	/* Restore original Post Data */
 	wp_reset_postdata();
 	wp_die();
@@ -981,14 +981,14 @@ add_action( 'wp_ajax_bi_natl_member_edit', 'bi_natl_member_edit_callback' );
 add_action( 'wp_ajax_nopriv_bi_natl_member_edit', 'bi_natl_member_edit_callback' );
 
 function bi_natl_member_edit_callback() {
-	do_action("init");
+	//do_action("init");
 	header('Content-type: application/json');
-	
-	$result = array();	
-	
+
+	$result = array();
+
 	$queried_post = get_post($_POST['id']);
 	$postid = $_POST['id'];
-	
+
 	$result[] = array(
 		"id" => $postid,
 		"title" => $queried_post->post_title,
@@ -1003,15 +1003,15 @@ function bi_natl_member_edit_callback() {
 		"institution" => get_post_meta( $postid, 'institution' ),
 		"country" => get_post_meta( $postid, 'country' ),
 		"website" => get_post_meta( $postid, 'website' ),
-		"socialmedia" => get_post_meta( $postid, 'socialmedia' ),		
+		"socialmedia" => get_post_meta( $postid, 'socialmedia' ),
 		"tags" => wp_get_object_terms( $postid, 'binm_tags' )
 
 
 	);
-		
-	
-	echo json_encode($result);	
-	wp_die();	
+
+
+	echo json_encode($result);
+	wp_die();
 
 }
 
@@ -1019,16 +1019,16 @@ add_action( 'wp_ajax_bi_natl_member_approve', 'bi_natl_member_approve_callback' 
 add_action( 'wp_ajax_nopriv_bi_natl_member_approve', 'bi_natl_member_approve_callback' );
 
 function bi_natl_member_approve_callback() {
-	do_action("init");
+	//do_action("init");
 	header('Content-type: application/json');
-	
+
 	$result = array();
 
-	$postid = $_POST['id'];	
+	$postid = $_POST['id'];
 	wp_publish_post( $postid );
-	
-	$queried_post = get_post($_POST['id']);	
-	
+
+	$queried_post = get_post($_POST['id']);
+
 	$result[] = array(
 		"id" => $postid,
 		"title" => $queried_post->post_title,
@@ -1041,13 +1041,13 @@ function bi_natl_member_approve_callback() {
 		"zipcode" => get_post_meta( $postid, 'zip_code' ),
 		"officename" => get_post_meta( $postid, 'officename' ),
 		"institution" => get_post_meta( $postid, 'institution' ),
-		"socialmedia" => get_post_meta( $postid, 'socialmedia' ),		
-		"website" => get_post_meta( $postid, 'website' ),		
+		"socialmedia" => get_post_meta( $postid, 'socialmedia' ),
+		"website" => get_post_meta( $postid, 'website' ),
 		"country" => get_post_meta( $postid, 'country' )
-	
+
 	);
-	
-	echo json_encode($result);	
+
+	echo json_encode($result);
 	wp_die();
 }
 
@@ -1055,23 +1055,23 @@ add_action( 'wp_ajax_bi_natl_member_disapprove', 'bi_natl_member_disapprove_call
 add_action( 'wp_ajax_nopriv_bi_natl_member_disapprove', 'bi_natl_member_disapprove_callback' );
 
 function bi_natl_member_disapprove_callback() {
-	do_action("init");
+	//do_action("init");
 	header('Content-type: application/json');
-	
+
 	$result = array();
 
-	$postid = $_POST['id'];	
-	
-	$queried_post = get_post($_POST['id']);	
+	$postid = $_POST['id'];
+
+	$queried_post = get_post($_POST['id']);
 
 	$my_post = array(
-      'ID'           => $postid,      
+      'ID'           => $postid,
       'post_status' => 'draft'
 	);
 
 	// Update the post into the database
 	  wp_update_post( $my_post );
-	
+
 	$result[] = array(
 		"id" => $postid,
 		"title" => $queried_post->post_title,
@@ -1084,13 +1084,13 @@ function bi_natl_member_disapprove_callback() {
 		"zipcode" => get_post_meta( $postid, 'zip_code' ),
 		"officename" => get_post_meta( $postid, 'officename' ),
 		"institution" => get_post_meta( $postid, 'institution' ),
-		"socialmedia" => get_post_meta( $postid, 'socialmedia' ),		
-		"website" => get_post_meta( $postid, 'website' ),		
+		"socialmedia" => get_post_meta( $postid, 'socialmedia' ),
+		"website" => get_post_meta( $postid, 'website' ),
 		"country" => get_post_meta( $postid, 'country' )
-	
+
 	);
-	
-	echo json_encode($result);	
+
+	echo json_encode($result);
 	wp_die();
 }
 
@@ -1098,22 +1098,22 @@ add_action( 'wp_ajax_bi_natl_member_delete', 'bi_natl_member_delete_callback' );
 add_action( 'wp_ajax_nopriv_bi_natl_member_delete', 'bi_natl_member_delete_callback' );
 
 function bi_natl_member_delete_callback() {
-	do_action("init");
+	//do_action("init");
 	header('Content-type: application/json');
-	
+
 	$result = array();
 
-	$post_id = $_POST['id'];	
-	
-	$queried_post = get_post($_POST['id']);	
+	$post_id = $_POST['id'];
+
+	$queried_post = get_post($_POST['id']);
 	wp_delete_post( $post_id );
-	
+
 	$result[] = array(
 		"id" => $post_id,
 		"title" => $queried_post->post_title
 	);
-	
-	echo json_encode($result);	
+
+	echo json_encode($result);
 	wp_die();
 }
 
@@ -1121,11 +1121,11 @@ add_action( 'wp_ajax_bi_natl_member_addtag', 'bi_natl_member_addtag_callback' );
 add_action( 'wp_ajax_nopriv_bi_natl_member_addtag', 'bi_natl_member_addtag_callback' );
 
 function bi_natl_member_addtag_callback() {
-	do_action("init");
+	//do_action("init");
 	header('Content-type: application/json');
-	
+
 	$newterm = $_POST['term'];
-	wp_insert_term( $newterm, 'binm_tags' );	
-	
+	wp_insert_term( $newterm, 'binm_tags' );
+
 	wp_die();
 }
